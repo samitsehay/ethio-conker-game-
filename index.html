@@ -19,7 +19,6 @@
             flex-direction: column;
         }
 
-        /* 1. ሎግ ኢን (Login) ማዕቀፍ */
         #loginScreen {
             position: fixed;
             top: 0;
@@ -70,7 +69,6 @@
             box-shadow: 0 3px 6px rgba(0,0,0,0.3);
         }
 
-        /* 2. የጨዋታ ዋና በይነገጽ */
         #gameScreen {
             display: none;
             flex-direction: column;
@@ -80,14 +78,14 @@
 
         .top-bar {
             background: rgba(0, 0, 0, 0.95);
-            padding: 6px 10px;
+            padding: 5px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #d4af37;
             font-size: 11px;
             width: 100%;
-            z-index: 10;
+            flex-shrink: 0;
         }
         .telebirr-badge {
             background: #008751;
@@ -102,10 +100,11 @@
         .opponents-bar {
             display: flex;
             justify-content: space-around;
-            padding: 3px;
+            padding: 2px;
             background: rgba(0,0,0,0.4);
             width: 100%;
             font-size: 10px;
+            flex-shrink: 0;
         }
         .opponent-tag {
             background: rgba(0,0,0,0.6);
@@ -123,11 +122,12 @@
             position: relative;
             padding: 2px;
             width: 100%;
+            min-height: 0;
         }
         
         .downloaded-melts-board {
             width: 94%;
-            height: 65px;
+            height: 55px;
             background: rgba(0, 0, 0, 0.5);
             border: 2px dashed #d4af37;
             border-radius: 6px;
@@ -149,8 +149,8 @@
             gap: 12px;
         }
         .card-box {
-            width: 44px;
-            height: 62px;
+            width: 42px;
+            height: 58px;
             background: #fff;
             color: #000;
             border-radius: 5px;
@@ -206,14 +206,16 @@
         .btn-game.pass { background: #ff4d4d; color: white; }
         .btn-game.dobe { background: #9c27b0; color: white; border: 1px solid #ffd700; }
 
+        /* የታችኛውን ቦታ እና ካርታዎች ማስተካከያ */
         .player-section {
             background: rgba(0, 0, 0, 0.95);
-            padding: 6px 4px;
+            padding: 6px 4px 18px 4px; /* ከታች በቂ ቦታ እንዲኖረው ተደረገ */
             border-top: 2px solid #d4af37;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
+            flex-shrink: 0;
         }
         
         .thick-download-line {
@@ -236,7 +238,7 @@
             gap: 3px;
             width: 100%;
             overflow-x: auto;
-            padding-bottom: 2px;
+            padding-bottom: 4px;
         }
         .player-card {
             background: #ffffff;
@@ -345,11 +347,11 @@
             {val: '4', suit: '♦', pts: 4, red: true},
             {val: '4', suit: '♣', pts: 4, red: false},
             {val: '4', suit: '♠', pts: 4, red: false},
-            {val: '4', suit: '♥', pts: 4, red: true}, // 5 ተመሳሳይ ካርታዎች (ዶቤ ናሙና)
+            {val: '4', suit: '♥', pts: 4, red: true},
             {val: 'JOKER', suit: '🃏', pts: 10, red: false, isJoker: true},
             {val: '3', suit: '♥', pts: 3, red: true},
             {val: '3', suit: '♦', pts: 3, red: true},
-            {val: '3', suit: '♣', pts: 3, red: false}, // 1 ሴት (ትሪስ)
+            {val: '3', suit: '♣', pts: 3, red: false},
             {val: 'K', suit: '♥', pts: 10, red: true}
         ];
 
@@ -457,6 +459,5 @@
             alert("⏭️ ተራዎ አልፏል!");
         }
     </script>
-
 </body>
 </html>
