@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ሳሚ ፀሀይ - 41 ኮንከር & ዶቤ ጨዋታ</title>
+    <title>ሳሚ ፀሀይ - ኢትዮ 41 ኮንከር & ዳማ</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; user-select: none; }
         html, body {
-            background-color: #0b6623;
+            background: radial-gradient(circle, #0b6623 0%, #033812 100%);
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -19,39 +19,40 @@
             flex-direction: column;
         }
 
-        /* 1. ሎግ ኢን ማዕቀፍ */
+        /* 1. መግቢያ (Login) ማዕቀፍ */
         #loginScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, #0b6623, #022c11);
+            background: linear-gradient(135deg, #0b6623, #011a08);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 1000;
             padding: 20px;
         }
         .login-card {
             background: rgba(0, 0, 0, 0.92);
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px solid #d4af37;
+            padding: 30px;
+            border-radius: 16px;
+            border: 2px solid #ffd700;
             text-align: center;
             width: 100%;
-            max-width: 320px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            max-width: 340px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        .login-card h2 { color: #ffd700; margin-bottom: 15px; font-size: 20px; }
+        .login-card h2 { color: #ffd700; margin-bottom: 10px; font-size: 22px; }
+        .login-card p { color: #aaa; font-size: 12px; margin-bottom: 20px; }
         .login-input {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            font-size: 16px;
             text-align: center;
             background: #fff;
             color: #000;
@@ -60,17 +61,17 @@
         .login-btn {
             width: 100%;
             padding: 12px;
-            background: #ffcc00;
+            background: linear-gradient(135deg, #ffd700, #ff9900);
             color: #000;
             font-weight: bold;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
 
-        /* 2. ዋናው የጨዋታ ማዕቀፍ */
+        /* 2. ዋናው የጨዋታ ገጽ */
         #gameScreen {
             display: none;
             flex-direction: column;
@@ -78,236 +79,383 @@
             height: 100%;
         }
 
-        /* የላይኛው የሁኔታ አሞሌ */
-        .top-bar {
-            background: rgba(0, 0, 0, 0.9);
-            padding: 6px 12px;
+        /* የላይኛው የሁኔታ እና የቴሌብር አሞሌ */
+        .top-status-bar {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #d4af37;
+            border-bottom: 2px solid #ffd700;
             font-size: 12px;
             flex-shrink: 0;
+            z-index: 10;
         }
-        .telebirr-badge {
+        .telebirr-wallet-badge {
             background: #008751;
             color: #fff;
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 15px;
             font-size: 11px;
             font-weight: bold;
             border: 1px solid #ffd700;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        /* መሃል ጠረጴዛ (እንደ ምስሉ አቀማመጥ) */
-        .table-area {
+        /* የጨዋታ መቀየሪያ (ኮንከር vs ዳማ) ታብ */
+        .game-mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 6px;
+            flex-shrink: 0;
+        }
+        .mode-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #ffd700;
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .mode-btn.active {
+            background: #ffd700;
+            color: #000;
+        }
+        /* 3. መሃል ጠረጴዛ እና የጨዋታ አካባቢ */
+        .main-table-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             position: relative;
-            padding: 10px;
+            padding: 8px;
+            overflow: hidden;
         }
 
-        /* ግዙፍ የ PASS ቁልፍ በመሃል */
-        .center-pass-btn {
-            background: linear-gradient(135deg, #ffcc00, #ff9900);
-            color: #000;
-            font-size: 22px;
-            font-weight: bold;
-            padding: 15px 40px;
-            border-radius: 35px;
-            border: 3px solid #fff;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-            cursor: pointer;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* የተጣለ እና የካርታ ማከማቻ ረድፍ */
-        .cards-pile-row {
+        /* የተጫዋቾች መረጃ አሞሌ */
+        .opponents-header {
             display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .table-card-box {
-            width: 65px;
-            height: 95px;
-            background: #fff;
-            color: #d90429;
+            justify-content: space-around;
+            width: 100%;
+            padding: 4px;
+            background: rgba(0,0,0,0.4);
             border-radius: 8px;
+            font-size: 11px;
+        }
+        .opponent-info {
+            background: rgba(0,0,0,0.6);
+            padding: 3px 10px;
+            border-radius: 10px;
+            border: 1px solid #d4af37;
+        }
+
+        /* የኮንከር ሰሌዳ (Conquer Table Area) */
+        #conquerBoard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex: 1;
+            position: relative;
+        }
+
+        .melts-drop-zone {
+            width: 92%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px dashed #ffd700;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #ffd700;
+        }
+
+        .center-pile-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .table-card {
+            width: 55px;
+            height: 80px;
+            background: #fff;
+            color: #000;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 6px;
+            padding: 5px;
             font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
             border: 2px solid #ccc;
             text-align: center;
             cursor: pointer;
         }
-        .table-card-box.deck {
-            background: linear-gradient(135deg, #5b247a, #1e3c72);
+        .table-card.deck {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
-            font-size: 12px;
+            font-size: 10px;
             justify-content: center;
             align-items: center;
-            border: 2px solid #ffd700;
         }
-        .best-sort-btn {
-            background: #00a8cc;
-            color: white;
-            border: 2px solid #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-            margin-top: 10px;
-        }
+        .table-card.red { color: #d90429; }
 
-        /* የታችኛው የተጫዋች እጅ (የተደራረበ አደራደር - Fanned Cards) */
-        .player-section {
-            background: rgba(0, 0, 0, 0.95);
-            padding: 10px 10px 15px 10px;
-            border-top: 2px solid #d4af37;
+        /* የዳማ ቦርድ (Damma Board Area) - ሲመረጥ የሚከፈት */
+        #dammaBoard {
+            display: none;
+            width: 280px;
+            height: 280px;
+            background: #8B4513;
+            border: 4px solid #ffd700;
+            border-radius: 6px;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+        }
+        .damma-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .damma-cell.light { background: #deb887; }
+        .damma-cell.dark { background: #5c4033; }
+        .damma-piece {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+        }
+        .damma-piece.white { background: #fff; border: 2px solid #333; }
+        .damma-piece.red { background: #d90429; border: 2px solid #fff; }
+
+        /* የቀኝ በኩል ፈጣን መቆጣጠሪያ ቁልፎች */
+        .right-action-panel {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+        }
+        .action-btn {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        .action-btn.pass { background: #ff4d4d; color: white; }
+        .action-btn.dobe { background: #9c27b0; color: white; border: 1px solid #ffd700; }
+        /* 4. የታችኛው የተጫዋች እጅ እና ካርታዎች መደብ */
+        .player-hand-section {
+            background: rgba(0, 0, 0, 0.98);
+            padding: 10px 8px 25px 8px;
+            border-top: 2px solid #ffd700;
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
             flex-shrink: 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
         }
 
+        .download-action-line {
+            width: 100%;
+            background: linear-gradient(90deg, #ff9900, #008751, #ff9900);
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            font-size: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+            border: 1px solid #ffd700;
+        }
+
+        /* ዘመናዊ የተደራረበ የካርታ አደራደር (Fanned Cards) */
         .hand-cards-container {
             display: flex;
             justify-content: center;
             align-items: flex-end;
-            height: 110px;
+            height: 105px;
             width: 100%;
             position: relative;
-            padding-bottom: 5px;
+            padding-bottom: 4px;
         }
 
-        /* እያንዳንዱ ካርታ አንዱ በሌላው ላይ እንዲደራረብ የሚደረግ አቀማመጥ */
         .player-card {
             background: #ffffff;
             color: #000000;
-            width: 62px;
-            height: 95px;
-            border-radius: 8px;
+            width: 52px;
+            height: 82px;
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 6px;
+            padding: 5px;
             font-weight: bold;
-            font-size: 14px;
-            box-shadow: -3px 3px 10px rgba(0,0,0,0.5);
+            font-size: 12px;
+            box-shadow: -3px 4px 10px rgba(0,0,0,0.6);
             cursor: pointer;
             position: absolute;
-            bottom: 5px;
+            bottom: 4px;
             transition: transform 0.2s, background-color 0.2s;
             user-select: none;
             border: 2px solid #bbb;
         }
         .player-card.selected {
-            transform: translateY(-25px) scale(1.05);
+            transform: translateY(-22px) scale(1.05);
             border: 2px solid #00ffcc;
             background-color: #e6ffff;
-            z-index: 50 !important;
+            z-index: 100 !important;
         }
         .player-card.red { color: #d90429; }
 
-        /* የቴሌብር የታችኛው መረጃ አሞሌ */
+        /* 5. የቴሌብር የታችኛው መረጃ አሞሌ */
         .bottom-telebirr-bar {
             width: 100%;
             background: #008751;
             color: #ffd700;
             text-align: center;
-            padding: 6px;
+            padding: 8px;
             font-size: 11px;
             font-weight: bold;
             border-top: 1px solid #ffd700;
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
-            gap: 10px;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. ሎግ ኢን ማዕቀፍ -->
+    <!-- 1. መግቢያ (Login) ማዕቀፍ -->
     <div id="loginScreen">
         <div class="login-card">
-            <h2>☀️ የፀሐይ 41 ኮንከር</h2>
-            <p style="font-size: 13px; margin-bottom: 15px; color: #ddd;">እባክዎ የመጫወቻ ስምዎን ያስገቡ</p>
+            <h2>☀️ የፀሐይ 41 ኮንከር & ዳማ</h2>
+            <p>እባክዎ የመጫወቻ ስምዎን ያስገቡ</p>
             <input type="text" id="playerNameInput" class="login-input" placeholder="ለምሳሌ: ሳሚ ፀሀይ" value="ሳሚ ፀሀይ">
             <button class="login-btn" onclick="startGame()">ጨዋታውን ጀምር</button>
         </div>
     </div>
 
-    <!-- 2. ዋናው የጨዋታ ማዕቀፍ -->
+    <!-- 2. ዋናው የጨዋታ ገጽ -->
     <div id="gameScreen">
-        <div class="top-bar">
+        <!-- የላይኛው አሞሌ -->
+        <div class="top-status-bar">
             <span>☀️ <b id="displayPlayerName">ሳሚ ፀሀይ</b></span>
             <span style="color: #ffd700;" id="walletBalance">ሂሳብ: 1,000 ETB</span>
-            <div class="telebirr-badge" onclick="openTelebirrModal()">📱 0972226999</div>
+            <div class="telebirr-wallet-badge" onclick="openTelebirrModal()">
+                📱 0972226999
+            </div>
+        </div>
+
+        <!-- የጨዋታ ሞድ መቀየሪያ (ኮንከር vs ዳማ) -->
+        <div class="game-mode-selector">
+            <button class="mode-btn active" id="btnConquer" onclick="switchGameMode('conquer')">🃏 41 ኮንከር ጨዋታ</button>
+            <button class="mode-btn" id="btnDamma" onclick="switchGameMode('damma')">♟️ የኢትዮጵያ ዳማ</button>
         </div>
 
         <!-- መሃል ጠረጴዛ -->
-        <div class="table-area">
-            <button class="center-pass-btn" onclick="passTurn()">PASS</button>
+        <div class="main-table-container">
+            <div class="opponents-header">
+                <div class="opponent-info">👤 Bella05 (13 ካርታ)</div>
+                <div class="opponent-info">👤 YaYa82 (13 ካርታ)</div>
+            </div>
 
-            <div class="cards-pile-row">
-                <div style="text-align: center;">
-                    <div style="font-size: 10px; margin-bottom: 3px; color: #ffd700;">የተጣለ</div>
-                    <div class="table-card-box" onclick="pickDiscarded()">
-                        <div style="font-size: 11px;">3</div>
-                        <div style="font-size: 22px;">♥</div>
-                        <div style="font-size: 11px; transform: rotate(180deg);">3</div>
+            <!-- ሀ) የኮንከር ቦርድ -->
+            <div id="conquerBoard">
+                <div class="melts-drop-zone" id="meltsBoard">
+                    <span>📥 የወረዱ ትሪሶች / ሩኖች ሰሌዳ (41 ማሟላት ወይም ዶቤ)</span>
+                </div>
+
+                <div class="center-pile-area">
+                    <div class="table-card red" onclick="pickDiscarded()">
+                        <div style="font-size: 9px;">የተጣለ</div>
+                        <div style="font-size: 22px;">3♥</div>
+                        <div style="font-size: 9px; color: #008751;">አንሳ</div>
+                    </div>
+
+                    <div class="table-card" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; justify-content: center; align-items: center;">
+                        <div style="font-size: 18px;">🃏</div>
+                        <div style="font-size: 9px; font-weight: bold;">ጆከር (10 ነጥብ)</div>
+                    </div>
+
+                    <div class="table-card deck" onclick="drawCard()">
+                        <div>ማከማቻ</div>
+                        <div style="font-size: 14px;"><b>22</b></div>
                     </div>
                 </div>
 
-                <div style="text-align: center;">
-                    <div style="font-size: 10px; margin-bottom: 3px; color: #ffd700;">ማከማቻ</div>
-                    <div class="table-card-box deck">
-                        <div>31</div>
-                        <div style="font-size: 9px;">ካርታ</div>
-                    </div>
+                <!-- የቀኝ በኩል ፈጣን አዝራሮች -->
+                <div class="right-action-panel">
+                    <button class="action-btn pass" onclick="passTurn()">PASS</button>
+                    <button class="action-btn dobe" onclick="declareDobe()">ዶቤ (ዕጥፍ)</button>
+                    <button class="action-btn" onclick="sortHand()">SORT</button>
+                    <button class="action-btn" style="background:#ff9900; color:black;" onclick="discardCard()">ጣል</button>
                 </div>
             </div>
 
-            <button class="best-sort-btn" onclick="sortHand()">BEST SORT</button>
+            <!-- ለ) የዳማ ቦርድ (በዲפולት የተደበቀ፣ ሲመረጥ የሚከፈት) -->
+            <div id="dammaBoard"></div>
         </div>
 
-        <!-- የታችኛው የተጫዋች እጅ (የተደራረበ አደራደር) -->
-        <div class="player-section">
+        <!-- የታችኛው የተጫዋች እጅ -->
+        <div class="player-hand-section" id="playerHandSection">
+            <div class="download-action-line" onclick="downloadMelts()">
+                ⬇️ 41 ሞልተው አውርድ (ውርድ / ዶቤ / ጆከር) ⬇️
+            </div>
             <div class="hand-cards-container" id="playerHand"></div>
         </div>
 
         <!-- የቴሌብር መረጃ ከታች -->
         <div class="bottom-telebirr-bar">
-            <span>📱 ቴሌብር ኪስ ቦርሳ: 0972226999 (ሳሚ ፀሀይ)</span>
-            <button onclick="openTelebirrModal()" style="background:#ffd700; color:#000; border:none; padding:2px 8px; border-radius:10px; font-weight:bold; cursor:pointer; font-size:10px;">ሂሳብ አስተካክል</button>
+            <span>📱 ቴሌብር: 0972226999 (ሳሚ ፀሀይ)</span>
+            <span style="color:#fff;" id="ruleHint">💡 ዶቤ: 5 ተመሳሳይ + 1 ሴት = ዕጥፍ!</span>
         </div>
     </div>
 
     <script>
         let myCards = [
             {val: '2', suit: '♥', pts: 2, red: true},
-            {val: '2', suit: '♣', pts: 2, red: false},
             {val: '3', suit: '♠', pts: 3, red: false},
-            {val: '5', suit: '♥', pts: 5, red: true},
-            {val: '7', suit: '♦', pts: 7, red: true},
-            {val: '8', suit: '♣', pts: 8, red: false},
-            {val: 'Q', suit: '♥', pts: 10, red: true},
-            {val: '10', suit: '♣', pts: 10, red: false},
-            {val: '10', suit: '♠', pts: 10, red: false},
-            {val: 'JOKER', suit: '🃏', pts: 10, red: false, isJoker: true}
+            {val: '4', suit: '♥', pts: 4, red: true},
+            {val: '4', suit: '♦', pts: 4, red: true},
+            {val: '4', suit: '♣', pts: 4, red: false},
+            {val: '4', suit: '♠', pts: 4, red: false},
+            {val: '4', suit: '♥', pts: 4, red: true}, // 5 ተመሳሳይ ካርታዎች (ዶቤ)
+            {val: '3', suit: '♦', pts: 3, red: true},
+            {val: '3', suit: '♣', pts: 3, red: false},
+            {val: '3', suit: '♥', pts: 3, red: true}, // 1 ሴት (ትሪስ)
+            {val: 'JOKER', suit: '🃏', pts: 10, red: false, isJoker: true},
+            {val: 'K', suit: '♥', pts: 10, red: true},
+            {val: 'A', suit: '♠', pts: 10, red: false}
         ];
 
         let selectedIndices = [];
@@ -322,6 +470,29 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').style.display = 'flex';
             renderHand();
+            initDammaBoard();
+        }
+
+        function switchGameMode(mode) {
+            let conquerBoard = document.getElementById('conquerBoard');
+            let dammaBoard = document.getElementById('dammaBoard');
+            let btnConquer = document.getElementById('btnConquer');
+            let btnDamma = document.getElementById('btnDamma');
+            let handSection = document.getElementById('playerHandSection');
+
+            if (mode === 'conquer') {
+                conquerBoard.style.display = 'flex';
+                dammaBoard.style.display = 'none';
+                handSection.style.display = 'flex';
+                btnConquer.classList.add('active');
+                btnDamma.classList.remove('active');
+            } else {
+                conquerBoard.style.display = 'none';
+                dammaBoard.style.display = 'grid';
+                handSection.style.display = 'none';
+                btnDamma.classList.add('active');
+                btnConquer.classList.remove('active');
+            }
         }
 
         function renderHand() {
@@ -330,7 +501,7 @@
 
             let totalCards = myCards.length;
             let containerWidth = container.clientWidth || 350;
-            let step = Math.min(28, (containerWidth - 70) / (totalCards - 1 || 1));
+            let step = Math.min(32, (containerWidth - 80) / (totalCards - 1 || 1));
 
             myCards.forEach((card, index) => {
                 let cardDiv = document.createElement('div');
@@ -339,13 +510,12 @@
                     cardDiv.classList.add('selected');
                 }
 
-                // ካርታዎቹ አንዱ በሌላው ላይ በቅደም ተከተል እንዲደራረቡ (Fan out)
-                cardDiv.style.left = `${index * step + 15}px`;
+                cardDiv.style.left = `${index * step + 20}px`;
                 cardDiv.style.zIndex = index + 1;
 
                 cardDiv.innerHTML = `
                     <div>${card.val}</div>
-                    <div style="font-size: 12px; text-align: center;">${card.suit}</div>
+                    <div style="font-size: 14px; text-align: center;">${card.suit}</div>
                     <div style="transform: rotate(180deg);">${card.val}</div>
                 `;
 
@@ -369,25 +539,60 @@
             renderHand();
         }
 
-        function openTelebirrModal() {
-            let action = prompt("የቴሌብር የኪስ ቦርሳ (0972226999 - ሳሚ ፀሀይ):\n1. ገንዘብ ለማስገባት\n2. ገንዘብ ለማውጣት\n\nቁጥር 1 ወይም 2 ይምረጡ:");
-            if (action === "1") {
-                let amount = prompt("ለማስገባት የሚፈልጉትን መጠን በብር ያስገቡ:");
-                if (amount) alert(`✅ በቴሌብር 0972226999 የተጠየቀው ${amount} ብር ገብቷል!`);
-            } else if (action === "2") {
-                let amount = prompt("ለማውጣት የሚፈልጉትን መጠን በብር ያስገቡ:");
-                if (amount) alert(`✅ ${amount} ብር ተልኳል!`);
+        function initDammaBoard() {
+            const board = document.getElementById('dammaBoard');
+            board.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    let cell = document.createElement('div');
+                    let isDark = (r + c) % 2 === 1;
+                    cell.className = isDark ? 'damma-cell dark' : 'damma-cell light';
+                    
+                    if (isDark && r < 3) {
+                        let piece = document.createElement('div');
+                        piece.className = 'damma-piece white';
+                        cell.appendChild(piece);
+                    } else if (isDark && r > 4) {
+                        let piece = document.createElement('div');
+                        piece.className = 'damma-piece red';
+                        cell.appendChild(piece);
+                    }
+                    board.appendChild(cell);
+                }
             }
         }
 
-        function pickDiscarded() {
-            alert("📥 የተጣለውን ካርታ አንስተዋል!");
+        function openTelebirrModal() {
+            let action = prompt("የቴሌብር የኪስ ቦርሳ (0972226999 - ሳሚ ፀሀይ):\n1. ገንዘብ ለማስገባት\n2. ገንዘብ ለማውጣት\n\nቁጥር 1 ወይም 2 ይምረጡ:");
+            if (action === "1") {
+                let amt = prompt("ለማስገባት የሚፈልጉትን መጠን በብር ያስገቡ:");
+                if (amt) alert(`✅ በቴሌብር 0972226999 የተጠየቀው ${amt} ብር ገብቷል!`);
+            } else if (action === "2") {
+                let amt = prompt("ለማውጣት የሚፈልጉትን መጠን በብር ያስገቡ:");
+                if (amt) alert(`✅ ${amt} ብር ተልኳል!`);
+            }
         }
 
-        function passTurn() {
-            alert("⏭️ ተራዎ አልፏል! (PASS)");
+        function pickDiscarded() { alert("📥 የተጣለውን ካርታ አንስተዋል!"); }
+        function drawCard() { alert("🃏 ከማከማቻው አዲስ ካርታ ደርሰዋል!"); }
+        function passTurn() { alert("⏭️ ተራዎ አልፏል! (PASS)"); }
+        function declareDobe() { alert("🔥 ዶቤ ታውጇል! (5 ተመሳሳይ ካርታዎች እና 1 ሴት/ትሪስ በመያዝዎ የዕጥፍ (Double) አሸናፊነት ተረጋግጧል!)"); }
+        function downloadMelts() {
+            if (selectedIndices.length === 0) {
+                alert("⚠️ እባክዎ ማውረድ የሚፈልጓቸውን ካርታዎች ይምረጡ!");
+                return;
+            }
+            alert("✨ ውርድዎ ተቀባይነት አግኝቷል! 41 ነጥብ አልፏል!");
+        }
+        function discardCard() {
+            if (selectedIndices.length === 1) {
+                myCards.splice(selectedIndices[0], 1);
+                selectedIndices = [];
+                renderHand();
+            } else {
+                alert("እባክዎ የሚጥሉትን *አንድ* ካርታ ብቻ ይምረጡ!");
+            }
         }
     </script>
-
 </body>
 </html>
