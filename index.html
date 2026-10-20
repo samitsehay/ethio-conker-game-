@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ፀሐይ ጨዋታ - ቴሌብር የኪስ ቦርሳ እና 41 ኮንከር</title>
+    <style>
+        body {
+            background-color: #0b6623;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* የላይኛው የቴሌብር እና ሂሳብ አሞሌ */
+        .top-bar {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d4af37;
+            font-size: 13px;
+        }
+        .telebirr-badge {
+            background: #008751;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid #ffd700;
+        }
+        .opponents-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 5px;
+            background: rgba(0,0,0,0.3);
+        }
+        .opponent-tag {
+            background: rgba(0,0,0,0.5);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            border: 1px solid #d4af37;
+        }
+
+        /* መሃል ጠረጴዛ እና የወረዱ ካርታዎች ሰሌዳ */
+        .table-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 5px;
+        }
+        
+        .downloaded-melts-board {
+            width: 92%;
+            height: 90px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 2px dashed #d4af37;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+            padding: 5px;
+        }
+
+        .center-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+        .card-box {
+            width: 55px;
+            height: 80px;
+            background: #fff;
+            color: #000;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border: 2px solid #ccc;
+            text-align: center;
+        }
+        .card-box.deck {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            font-size: 11px;
+            justify-content: center;
+            align-items: center;
+        }
+        .card-box.joker-indicator {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-size: 10px;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #fff;
+        }
+        .card-box.red { color: #d90429; }
+
+        /* የቀኝ በኩል ቁልፎች */
+        .action-buttons-right {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn-game {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            text-align: center;
+            font-weight: bold;
+        }
+        .btn-game.pass { background: #ff4d4d; color: white; }
+
+        /* የታችኛው የተጫዋች እጅ እና ወፍራም የማውረጃ መስመር */
+        .player-section {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 5px;
+            border-top: 2px solid #d4af37;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .thick-download-line {
+            width: 100%;
+            background: linear-gradient(90deg, #ff9900, #00cc66, #ff9900);
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+        }
+
+        .hand-cards-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            width: 100%;
+            max-width: 850px;
+        }
+        .player-card {
+            background: #ffffff;
+            color: #000000;
+            width: 46px;
+            height: 75px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.15s;
+            user-select: none;
+        }
+        .player-card.selected {
+            transform: translateY(-15px);
+            border: 2px solid #00ffcc;
+            background-color: #e6ffff;
+            z-index: 10;
+        }
+        .player-card.red { color: #d90429; }
+    </style>
+</head>
+<body>
+
+    <!-- የላይኛው የቴሌብር እና የሂሳብ አሞሌ -->
+    <div class="top-bar">
+        <span>☀️ <b>ፀሐይ ጨዋታ</b></span>
+        <span style="color: #ffd700;" id="walletBalance">ሂሳብ: 1,000 ETB</span>
+        <div class="telebirr-badge" onclick="openTelebirrModal()">
+            📱 ቴሌብር: 0972226999 (ሳሚ)
+        </div>
+    </div>
+
+    <div class="opponents-bar">
+        <div class="opponent-tag">👤 Bella05 (13 ካርታ)</div>
+        <div class="opponent-tag">👤 YaYa82 (11 ካርታ)</div>
+    </div>
+
+    <!-- መሃል ጠረጴዛ -->
+    <div class="table-area">
+        <div class="downloaded-melts-board" id="meltsBoard">
+            <span style="font-size: 11px; color: #d4af37;">📥 የወረዱ ትሪሶች / ሩኖች (ገቢ ማድረጊያ ሰሌዳ)</span>
+        </div>
+
+        <div class="center-row">
+            <div class="card-box red">
+                <div style="font-size: 9px; color: #555;">የተጣለ</div>
+                <div style="font-size: 16px;">3♥</div>
+                <div style="font-size: 9px; color: #555;">አንሳ</div>
+            </div>
+
+            <div class="card-box joker-indicator">
+                <div style="font-size: 15px;">🃏</div>
+                <div style="font-size: 9px; font-weight: bold;">የዙሩ ጆከር</div>
+            </div>
+
+            <div class="card-box deck">
+                ማከማቻ<br><b>22</b>
+            </div>
+        </div>
+
+        <div class="action-buttons-right">
+            <button class="btn-game pass">PASS</button>
+            <button class="btn-game" onclick="sortHand()">SORT</button>
+            <button class="btn-game" style="background:#ff9900; color:black;" onclick="discardCard()">ካርታ ጣል</button>
+        </div>
+    </div>
+
+    <!-- የታችኛው የተጫዋች እጅ -->
+    <div class="player-section">
+        <div class="thick-download-line" onclick="downloadMelts()">
+            ⬇️ ትሪስ/ሩን አውርድ (ይህን ወፍራም መስመር ይንኩ) ⬇️
+        </div>
+
+        <div style="font-size: 11px; color: #00ffcc; margin-bottom: 5px;" id="ruleText">
+            💡 ቴሌብር አካውንትዎ ከዚህ ጨዋታ ጋር ተገናኝቷል!
+        </div>
+
+        <div class="hand-cards-row" id="playerHand"></div>
+    </div>
+
+    <script>
+        let myCards = [
+            {val: 'J', suit: '♠', pts: 10, red: false},
+            {val: '10', suit: '♦', pts: 10, red: true},
+            {val: '9', suit: '♣', pts: 9, red: false},
+            {val: '3', suit: '♣', pts: 3, red: false},
+            {val: '2', suit: '♦', pts: 2, red: true},
+            {val: 'JOKER', suit: '🃏', pts: 25, red: false, isJoker: true},
+            {val: '2', suit: '♥', pts: 2, red: true}
+        ];
+
+        let selectedIndices = [];
+
+        function renderHand() {
+            const container = document.getElementById('playerHand');
+            container.innerHTML = '';
+
+            myCards.forEach((card, index) => {
+                let cardDiv = document.createElement('div');
+                cardDiv.className = card.red ? 'player-card red' : 'player-card';
+                if (selectedIndices.includes(index)) {
+                    cardDiv.classList.add('selected');
+                }
+
+                cardDiv.innerHTML = `
+                    <div>${card.val}</div>
+                    <div style="font-size: 12px; text-align: center;">${card.suit}</div>
+                    <div style="transform: rotate(180deg);">${card.val}</div>
+                `;
+
+                cardDiv.addEventListener('click', () => {
+                    const pos = selectedIndices.indexOf(index);
+                    if (pos > -1) {
+                        selectedIndices.splice(pos, 1);
+                    } else {
+                        selectedIndices.push(index);
+                    }
+                    renderHand();
+                });
+
+                container.appendChild(cardDiv);
+            });
+        }
+
+        function sortHand() {
+            myCards.sort((a, b) => b.pts - a.pts);
+            selectedIndices = [];
+            renderHand();
+        }
+
+        function openTelebirrModal() {
+            let action = prompt("የቴሌብር የኪስ ቦርሳ (0972226999 - ሳሚ ፀሀይ):\n1. ገንዘብ ለማስገባት (Deposit)\n2. ገንዘብ ለማውጣት (Withdraw)\n\nቁጥር 1 ወይም 2 ይምረጡ:");
+            if (action === "1") {
+                let amount = prompt("ለማስገባት የሚፈልጉትን መጠን በብር ያስገቡ:");
+                if (amount) {
+                    alert(`✅ በቴሌብር 0972226999 የተጠየቀው ${amount} ብር ወደ ሂሳብዎ ገብቷል!`);
+                }
+            } else if (action === "2") {
+                let amount = prompt("ለማውጣት የሚፈልጉትን መጠን በብር ያስገቡ:");
+                if (amount) {
+                    alert(`✅ ከሂሳብዎ ${amount} ብር ወደ ቴሌብር ቁጥርዎ ተልኳል!`);
+                }
+            }
+        }
+
+        function downloadMelts() {
+            if (selectedIndices.length === 0) {
+                alert("⚠️ እባክዎ ማውረድ የሚፈልጓቸውን ካርታዎች ይምረጡ!");
+                return;
+            }
+            alert("✨ ትሪስ/ሩን በመሃል ሰሌዳ ላይ ተወርዷል!");
+        }
+
+        function discardCard() {
+            if (selectedIndices.length === 1) {
+                myCards.splice(selectedIndices[0], 1);
+                selectedIndices = [];
+                renderHand();
+            } else {
+                alert("እባክዎ የሚጥሉትን *አንድ* ካርታ ብቻ ይምረጡ!");
+            }
+        }
+
+        renderHand();
+    </script>
+
+</body>
+</html>
